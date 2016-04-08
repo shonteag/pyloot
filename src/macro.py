@@ -31,6 +31,10 @@ def get_params_ints(s):
 is_tab = '\t'.__eq__
 
 def build_tree(lines):
+    """
+    shamelessly yoinked from stackoverflow
+    user "pillmuncher"
+    """
     lines = iter(lines)
     final_stack = []
     rolls = []
