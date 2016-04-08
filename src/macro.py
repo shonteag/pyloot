@@ -5,83 +5,121 @@ Interpreter for the macro system.
 
 import random
 import os
-from itertools import takewhile
 from copy import deepcopy
+import cStringIO
 
 COMMENT_TAG = "#"
 
-def prune_line(line):
-    return line.replace("\t", "").replace(" ", "")
+CMD_ROLL = "roll"
+CMD_RANGE = "range"
+CMD_DROP = "drop"
+
+def strip_line(line):
+    return line.lstrip().rstrip()
+def strip_comments(macro):
+    string = cStringIO.StringIO()
+    for line in macro:
+        if is_statement(line):
+            continue
+        string.write(line)
+    return string
 def split_line(line):
-    return line.replace("\t", "").split(" ")
-def all_to_int(params):
-    for x in range(0, len(params)):
-        params[x] = int(params[x])
-    return params
-def tab_to_spaces(inf):
-    return inf.replace("\t", "    ")
+    return strip_line(line).split(" ")
+def get_cmd_params(line):
+    return split_line(line)[0], split_line(line)[1:]
+def is_statement(line):
+    if (strip_line(line) != "" and 
+        not strip_line(line).startswith(COMMENT_TAG)):
+        return True
+    return False
+def in_range(num, params):
+    if num >= int(params[0]) and num <= int(params[1]):
+        return True
+    return False
 
-def get_cmd(s):
-    return split_line(s)[0]
-def get_params(s):
-    return split_line(s)[1:]
-def get_params_ints(s):
-    return all_to_int(split_line(s)[1:])
+def get_level_cmd_params(line):
+    level = line.count("\t")
+    return level, split_line(line)[0], split_line(line)[1:]
 
-is_tab = '\t'.__eq__
+class Node(object):
+    def __init__(self, parent, line):
+        self.parent = parent
+        self.children = []
+        self.line = line
+        self.level, self.cmd, self.params = \
+            get_level_cmd_params(self.line)
+        self.value = None
 
-def build_tree(lines):
-    """
-    shamelessly yoinked from stackoverflow
-    user "pillmuncher"
-    """
-    lines = iter(lines)
-    final_stack = []
-    rolls = []
-    stack = []
-    for line in lines:
-        if line.lstrip().rstrip().startswith(COMMENT_TAG):
-            continue
-        if line == "":
-            continue
-        indent = len(list(takewhile(is_tab, line)))
-        stack[indent:] = [line.lstrip().rstrip()]
-        if get_cmd(line) == "roll":
-            params = get_params_ints(line)
-            rolls.append(params)
-        if get_cmd(line) == "drop":
-            final_stack.append(deepcopy(stack))
-    return rolls, final_stack
+    def is_leaf(self):
+        return self.cmd == CMD_DROP
 
-def roll(rollranges, stacks):
-    rolls = []
-    for rollrange in rollranges:
-        rolls.append(random.randint(rollrange[0], rollrange[1]))
+    def eval(self):
+        if self.cmd == CMD_ROLL:
+            # parent is irrelevant
+            self.value = random.randint(int(self.params[0]), int(self.params[1]))
+        elif self.cmd == CMD_RANGE:
+            # parent will always be roll
+            self.value = in_range(self.parent.value, self.params)
+        elif self.cmd == CMD_DROP:
+            # parent will always be range
+            if self.parent.value:
+                self.value = self.params
+        print strip_line(self.line), "\t\t\t", self.value
+        return self.value
 
-    loot = []
-    for stack in stacks:
-        roll_index = 0
-        for step in stack:
-            if get_cmd(step) == "roll":
-                pass
-            if get_cmd(step) == "range":
-                params = get_params_ints(step)
-                if rolls[roll_index] >= params[0] and rolls[roll_index] <= params[1]:
-                    roll_index += 1
-                    continue
-                else:
+    def add_child(self, node):
+        self.children.append(node)
+
+class LootTree(object):
+    def __init__(self, macro):
+        self.macro = macro
+        self.root = None
+        self.line = "TREE"
+        self.loot = []
+
+        self.populate()
+
+    def populate(self):
+        print "populating..."
+        
+        def recurse(parent, depth, source):
+            last_line = source.readline().rstrip()
+            while last_line:
+                tabs, cmd, params = get_level_cmd_params(last_line)
+                if tabs < depth:
                     break
-            if get_cmd(step) == "drop":
-                params = get_params(step)
-                loot.append(params)
+                node = Node(parent, last_line)
+                if tabs >= depth:
+                    parent.add_child(node)
+                    last_line = recurse(node, tabs+1, source)
+            return last_line
 
-    return rolls, loot
+        self.root = Node(self, self.macro.readline().rstrip())
+        recurse(self.root, 0, self.macro)
+
+    def eval(self):
+        print "generating pathing..."
+
+        def recurse(root):
+            root.eval()
+            if root.is_leaf():
+                self.loot.append(root.value)
+            else:
+                if root.value is not False:
+                    for node in root.children:
+                            recurse(node)
+
+        recurse(self.root)
+        return self.loot
 
 
 if __name__ == "__main__":
     macro = open('../example/macro2.txt')
-    macro = macro.read().split(os.linesep)
-    rolls, loot = roll(*build_tree(macro))
-    for x in loot:
-        print x
+
+    tree = LootTree(macro)
+    loot = tree.eval()
+
+    print "=============="
+    for item in loot:
+        print item
     
