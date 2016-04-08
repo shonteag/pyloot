@@ -1,0 +1,13 @@
+roll 1 100
+	range 1 24
+		# nothing
+	range 25 50
+		drop credits 1000 2000
+	range 51 95
+		roll 1 10
+			range 1 4
+				drop gear weapon assault_rifle *
+			range 5 9
+				drop gear armor light *
+			range 10 10
+				drop gear weapon pistol killroshi
