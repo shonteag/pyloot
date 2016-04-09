@@ -1,0 +1,7 @@
+roll 1 1000
+	range 1 500
+		drop item1
+	range 501 1000
+		drop item2
+	range 1000 1000
+		drop item3

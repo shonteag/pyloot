@@ -116,6 +116,7 @@ class LootTree(object):
     def __init__(self, macro):
         self.macro = macro
         self.root = None
+        self.leaves = []
         self.line = "TREE"
         self.loot = []
 
@@ -137,11 +138,12 @@ class LootTree(object):
                 if tabs >= depth:
                     parent.add_child(node)
                     last_line = recurse(node, tabs+1, source)
+                if node.is_leaf():
+                    self.leaves.append(node)
             return last_line
 
         self.root = _Node(self, get_next_line(self.macro))
         # reset the macrofile handler
-        self.macro.seek(0)
         recurse(self.root, 0, self.macro)
 
     def eval(self):
@@ -163,7 +165,34 @@ class LootTree(object):
         recurse(self.root)
         return self.loot
 
+    def eval_dropchance(self):
+        """
+        Evaluate the drop chance at each
+        of the DROP nodes (leaves) and return
+        a dict keyed to the parameter string
+        of each DROP node.
+        """
+        drop_chances = {}
+        for leaf in self.leaves:
+            last_range = 0
+            chance = 1
+            node = leaf
+            while True:
+                if node.cmd == CMD_RANGE:
+                    last_range = int(node.params[1]) + 1 - int(node.params[0])
+                if node.cmd == CMD_ROLL:
+                    roll_range = int(node.params[1]) + 1 - int(node.params[0])
+                    roll_chance = float(last_range) / float(roll_range)
+                    chance *= roll_chance
+                
+                if node.parent == self:
+                    drop_chances[' '.join(s for s in leaf.params)] = chance
+                    break
 
+                node = node.parent
+
+        return drop_chances
+            
 # functional methods
 def roll(macro_file):
     """
@@ -173,5 +202,20 @@ def roll(macro_file):
     keys.
     """
     tree = LootTree(macro_file)
+    return tree.eval()
+
+
+if __name__ == "__main__":
+    tree = LootTree(open('../../example/mob1.macro'))
+    chances = tree.eval_dropchance()
+
+    print "drop table:"
+    for key in chances.keys():
+        print key, "|", '{0:.2f}% chance'.format(chances[key] * 100.0)
+    print "-----------------"
+
+    print "drops:"
     loot = tree.eval()
-    return loot
+    for item in loot:
+        print item
+    print "-----------------"
