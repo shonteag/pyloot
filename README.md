@@ -1,6 +1,14 @@
 PyLoot
 ==================
+A package built to allow game developers to
+create customized rolling schema and loot tables.
+  
+The system is split into two sections: loot tables,
+and loot macros.
+  
 
-PyLoot is a loot table system written in python. The goal is to allow a user to create customized loot tables via macro files, which can then be rolled by a call to this module.
-
-Heavily WIP
+*Subpackage: pyloot.roller*
+  
+The roller subpackage consists of various classes
+and methods for the parsing and rolling of macro
+files. (See "Macro Files")
