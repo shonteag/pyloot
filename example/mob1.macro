@@ -26,16 +26,9 @@
 
 # A custom loot macro, perhaps for a special mob?
 roll 1 100
-	range 1 25
-		drop gold 1000 3000
-	range 26 75
-		drop item1
-		roll 1 2
-			range 2 2
-				drop item2
-	range 76 100
-		roll 1 10
-			range 1 5
-				drop rareitem1
-			range 6 10
-				drop rareitem2
+	range 1 50
+		drop weapon sword short
+	range 51 90
+		drop weapon bow cross
+	range 91 100
+		drop weapon sword kassius_sword

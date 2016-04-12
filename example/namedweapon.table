@@ -1,0 +1,11 @@
+{
+	"weapon": {
+		"sword": {
+			"kassius_sword": {
+				"name": "Kassius' Sabre",
+				"base_dmg": "15",
+				"base_speed": "5"
+			}
+		}
+	}
+}
