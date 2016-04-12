@@ -10,9 +10,8 @@ provided in said file.
 
 Entry:
 -------
-from pyloot.parser import macro
-macrofile = open("file.txt")
-tree = LootTree(macrofile)
+from pyloot.roller.Tree import LootTree
+tree = LootTree("path/to/macro/file")
 loot_keys = tree.eval()
 -------
 """
@@ -186,6 +185,7 @@ class LootTree(object):
                     chance *= roll_chance
                 
                 if node.parent == self:
+                    # parent of root is LootTree
                     drop_chances[' '.join(s for s in leaf.params)] = chance
                     break
 

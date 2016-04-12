@@ -2,20 +2,21 @@ import random
 import Error
 
 
-class Item(object):
+class BaseItem(object):
 	"""
 	An extendable class for housing the
 	Item object, which knows how to roll
 	it's own stats as detailed in the
-	dict file ("*.table").
+	table file.
 	"""
 
-	def __init__(self, initdict):
+	def __init__(self, initdict, keylist):
 		"""
 		Initializer takes the a dictionary
 		extracted from the *.table files by
 		the Instance module.
 		"""
+		self.keylist = keylist
 		self.itemdict = initdict
 		self.statdict = {}
 		self.set_stats()

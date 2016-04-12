@@ -1,11 +1,22 @@
+"""
+The lookup subpackage's main module.
+Used to register lookup table (dict),
+and can be 'queried' to retrieve Items,
+(which know how to roll their own stats).
+"""
+import sys
 import random
+
 import Item
-import Error
+
 
 TABLE = {}
+ITEMCLASS = Item.BaseItem
 
 def _merge(a, b, path=None):
-    "merges b into a"
+    """
+    merges b into a
+    """
     if path is None: path = []
     for key in b:
         if key in a:
@@ -14,10 +25,20 @@ def _merge(a, b, path=None):
             elif a[key] == b[key]:
                 pass # same leaf value
             else:
-                raise Exception('Conflict at %s' % '.'.join(path + [str(key)]))
+                raise KeyError(
+                	'Conflict at %s' % '.'.join(path + [str(key)]))
         else:
             a[key] = b[key]
     return a
+
+def set_item_class(item_class):
+	"""
+	Can be used to set the returned
+	item object class (from lookups).
+	Should be used if the user extends
+	the Item.BaseItem class!
+	"""
+	setattr(sys.modules[__name__], "ITEMCLASS", item_class)
 
 def register(table, append=True):
 	"""
@@ -33,8 +54,13 @@ def lookup(keylist):
 	table = TABLE[str(keylist[0])]
 	for i in range(1, len(keylist)):
 		table = table[keylist[i]]
-	return Item.Item(table)
+	return ITEMCLASS(table, keylist)
 
 def items(list_of_keylists):
+	"""
+	generator for iterating over
+	all 'dropped' keys from the
+	roller subpackage.
+	"""
 	for keylist in list_of_keylists:
 		yield lookup(keylist)

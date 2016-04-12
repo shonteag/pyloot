@@ -9,6 +9,7 @@
 # 2) "range" must always be preceeded by a "roll"
 # 3) there can be no further nodes past "drop"
 # 4) "range" can be followed by "drop" or "roll" or both!
+# 5) "range" can overlap and appear in any order
 #
 # Everything after the token is considered a
 # "parameter", which will be used to affect the
@@ -29,6 +30,11 @@ roll 1 100
 	range 1 50
 		drop weapon sword short
 	range 51 90
-		drop weapon bow cross
+		roll 1 10
+			range 1 5
+				drop armor light robe
+			range 6 10
+				drop armor heavy plate
 	range 91 100
+		# a rare, named weapon drop!
 		drop weapon sword kassius_sword
