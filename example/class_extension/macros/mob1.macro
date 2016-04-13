@@ -28,13 +28,12 @@
 # A custom loot macro, perhaps for a special mob?
 roll 1 100
 	range 1 50
-		drop weapon sword short
+		drop weapon sword *
+		drop weapon bow *
 	range 51 90
-		roll 1 10
-			range 1 5
-				drop armor light robe
-			range 6 10
-				drop armor heavy plate
+		# this drops any piece in the
+		# lookup table under the key 'armor'
+		drop armor * *
 	range 91 100
 		# a rare, named weapon drop!
 		drop weapon sword kassius_sword

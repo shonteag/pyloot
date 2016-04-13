@@ -40,6 +40,26 @@ class ExampleItem(Item.BaseItem):
     def get_types(self):
         return self.keylist
 
+    def on_equip(self, player_object):
+        """
+        effect the player_object's stats
+        in some way when the item is equipt,
+        for instance.
+        """
+        pass
+
+    def on_pickup(self, player_object):
+        """
+        effect the player_object's stats
+        or the stats on the item itself when
+        the player picks up the item.
+
+        These example methods all depend on
+        the mechanics of your game.
+        """
+        pass
+
+
 class ExampleEnemy(object):
     def __init__(self, name, macropath):
         self.name = name
@@ -80,10 +100,10 @@ if __name__ == "__main__":
     # Another json file, which merges to the "weapon" key:
     Instance.register(parser.parse('tables/namedweapon.table'))
     # An XML file
-    Instance.register(parser.parse('tables/armor.table'))
+    Instance.register(parser.parse('tables/armor.xml'))
 
     # set the item class to override lookup.Item.BaseItem
     Instance.set_item_class(ExampleItem)
 
-    enemy = ExampleEnemy("Shonte", "mob1.macro")  # create the enemy
+    enemy = ExampleEnemy("Shonte", "macros/mob1.macro")  # create the enemy
     enemy.on_death()  # kill the enemy

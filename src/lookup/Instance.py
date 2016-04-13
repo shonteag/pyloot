@@ -12,6 +12,9 @@ import Item
 
 TABLE = {}
 ITEMCLASS = Item.BaseItem
+ITEMSUBCLASS = {}
+
+WILDCARD = "*"
 
 def _merge(a, b, path=None):
     """
@@ -40,6 +43,13 @@ def set_item_class(item_class):
 	"""
 	setattr(sys.modules[__name__], "ITEMCLASS", item_class)
 
+def register_item_class(key, item_class):
+	"""
+	Register a specific subclass to a
+	key string, item.get_dict_key()
+	"""
+	ITEMSUBCLASS.update({str(key):item_class})
+
 def register(table, append=True):
 	"""
 	register all primary keys in
@@ -53,8 +63,23 @@ def lookup(keylist):
 	"""
 	table = TABLE[str(keylist[0])]
 	for i in range(1, len(keylist)):
-		table = table[keylist[i]]
-	return ITEMCLASS(table, keylist)
+		if keylist[i] == WILDCARD:
+			# allow for wildcard rolling
+			randomkey = random.choice(table.keys())
+			table = table[randomkey]
+			keylist[i] = randomkey
+		else:
+			table = table[keylist[i]]
+
+	# find proper item sublcass
+	lastfound = ITEMCLASS
+	for j in range(1, len(keylist)):
+		keylist_ = keylist[0:j]
+		if Item.list_to_dict_key(keylist_) in ITEMSUBCLASS:
+			lastfound = ITEMSUBCLASS[Item.list_to_dict_key(keylist_)]
+
+	# if no special class, use base class
+	return lastfound(table, keylist)
 
 def items(list_of_keylists):
 	"""
