@@ -1,0 +1,26 @@
+<armor>
+	<light>
+		<robe>
+			<name>Cloth Robe</name>
+			<base_damage_reduction>roll 15 20</base_damage_reduction>
+			<base_movement_speed_reduction>2</base_movement_speed_reduction>
+			<rarity>roll 1 100</rarity>
+		</robe>
+	</light>
+	<medium>
+		<leather>
+			<name>Leather Bracers</name>
+			<base_damage_reduction>roll 20 25</base_damage_reduction>
+			<base_movement_speed_reduction>5</base_movement_speed_reduction>
+			<rarity>roll 1 100</rarity>
+		</leather>
+	</medium>
+	<heavy>
+		<plate>
+			<name>Plate Armor</name>
+			<base_damage_reduction>roll 25 30</base_damage_reduction>
+			<base_movement_speed_reduction>8</base_movement_speed_reduction>
+			<rarity>roll 1 100</rarity>
+		</plate>
+	</heavy>
+</armor>

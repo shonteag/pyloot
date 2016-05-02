@@ -206,7 +206,7 @@ def roll(macro_file):
 
 
 if __name__ == "__main__":
-    tree = LootTree(open('../../example/mob1.macro'))
+    tree = LootTree(open('../../example/adding_to_the_rolling_schema/macros/mob1.macro'))
     chances = tree.eval_dropchance()
 
     print "drop table:"

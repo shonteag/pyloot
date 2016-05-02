@@ -1,0 +1,29 @@
+{
+	"weapon": {
+		"sword": {
+			"short": {
+				"name": "Short Sword",
+				"base_dmg": "roll 10 20",
+				"base_speed": "roll 2 3",
+				"rarity": "roll 1 50"
+			},
+			"broad": {
+				"name": "Broadsword",
+				"base_dmg": "roll 40 60",
+				"base_speed": "1"
+			}
+		},
+		"bow": {
+			"composite": {
+				"name": "Composite Bow",
+				"base_dmg": "roll 5 15",
+				"base_speed": "roll 2 3"
+			},
+			"cross": {
+				"name": "Crossbow",
+				"base_dmg": "roll 40 60",
+				"base_speed": "1"
+			}
+		}
+	}
+}

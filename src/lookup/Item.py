@@ -23,7 +23,7 @@ class BaseItem(object):
 	table file.
 	"""
 
-	def __init__(self, initdict, keylist):
+	def __init__(self, initdict, keylist, args=None):
 		"""
 		Initializer takes the a dictionary
 		extracted from the *.table files by
@@ -37,14 +37,23 @@ class BaseItem(object):
 			"damage":"roll 15 25",
 			etc...
 		}
+		These are populated from the lookup tables.
 
 		keylist is a list of keys (str) which
 		Instance.lookup used to find the item.
 		["weapon", "sword", "broad"]
+		These are populated from the macro file.
+
+		args are custom arguments passed to the
+		lookup FROM the macro.
+			drop weapon sword broad ( level rarity )
+		for instance. These are ignored by the
+		lookup table, unless you override BaseItem.roll_stats()!
 		"""
 		self.keylist = keylist
 		self.itemdict = initdict
 		self.statdict = {}
+		self.args = args
 
 		self.roll_stats()
 
@@ -67,6 +76,11 @@ class BaseItem(object):
 						key))
 
 			self.statdict[key] = value
+
+	def get_type(self):
+		# primary key in the lookup table
+		# weapon, armor, etc
+		return self.keylist[0]
 
 	def get_dict_key(self):
 		"""return a hashable key"""

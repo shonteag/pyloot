@@ -67,5 +67,5 @@ def parse(file_path, parser_key=None):
 					" proceeding to next type".format(parser))
 
 	# gets called if no parser is a match.
-	raise FormatError("unable to parse '{0}'".format(file_path))
+	raise Exception("unable to parse {0}".format(file_path))
 	return {}

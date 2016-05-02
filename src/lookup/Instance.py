@@ -15,6 +15,8 @@ ITEMCLASS = Item.BaseItem
 ITEMSUBCLASS = {}
 
 WILDCARD = "*"
+ARG_BEGIN = "("
+ARG_END = ")"
 
 def _merge(a, b, path=None):
     """
@@ -61,17 +63,40 @@ def lookup(keylist):
 	"""
 	key is of type list
 	"""
+	args = []
 	table = TABLE[str(keylist[0])]
-	for i in range(1, len(keylist)):
+	length = len(keylist)
+	i = 1
+	while i in range(1, length):
+
 		if keylist[i] == WILDCARD:
 			# allow for wildcard rolling
 			randomkey = random.choice(table.keys())
 			table = table[randomkey]
 			keylist[i] = randomkey
+
+		elif keylist[i] == ARG_BEGIN:
+			# remove the "("
+			keylist.pop(i)
+			# we are in arguments
+			while True:
+				if keylist[i] != ARG_END:
+					args.append(keylist[i])
+
+				keylist.pop(i)
+				length -= 1
+
+				if keylist[i] == ARG_END:
+					keylist.pop(i)
+					length -= 1
+					break
+
 		else:
 			table = table[keylist[i]]
 
-	# find proper item sublcass
+		i += 1
+
+	# find proper item subclass
 	lastfound = ITEMCLASS
 	for j in range(1, len(keylist)):
 		keylist_ = keylist[0:j]
@@ -79,7 +104,7 @@ def lookup(keylist):
 			lastfound = ITEMSUBCLASS[Item.list_to_dict_key(keylist_)]
 
 	# if no special class, use base class
-	return lastfound(table, keylist)
+	return lastfound(table, keylist, args=args)
 
 def items(list_of_keylists):
 	"""

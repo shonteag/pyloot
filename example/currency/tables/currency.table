@@ -1,0 +1,8 @@
+<currency>
+	<gold_coin>
+		<name>Gold Coin</name>
+	</gold_coin>
+	<myst_token>
+		<name>Mysterious Token</name>
+	</myst_token>
+</currency>

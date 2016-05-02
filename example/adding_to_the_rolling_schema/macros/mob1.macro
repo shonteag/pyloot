@@ -1,0 +1,41 @@
+# this is an example loot macro
+# it is a fully customizable with
+# three building blocks:
+# 1) roll
+# 2) range
+# 3) drop
+# these can be nested according to several rules:
+# 1) the first line must always be a "roll"
+# 2) "range" must always be preceeded by a "roll"
+# 3) there can be no further nodes past "drop"
+# 4) "range" can be followed by "drop" or "roll" or both!
+# 5) "range" can overlap and appear in any order
+#
+# Everything after the token is considered a
+# "parameter", which will be used to affect the
+# programs execution.
+# roll 1 100   <-- roll a integer between 1 and 100
+# range 1 50   <-- conditional statement; checks integer
+#                  rolled in preceeding "roll"
+# drop *       <-- * indicates a loot key that can be
+# 				   used to lookup the piece of loot later.
+#
+# Rather evidently enough, a "#" line indicates a comment.
+# Blank lines are ignored by the parsers.
+#
+# NOTE: This file uses TAB indentation to parse, not space.
+
+# A custom loot macro, perhaps for a special mob?
+roll 1 100
+	range 1 50
+		drop weapon sword *
+	range 51 90
+		# this drops any piece in the
+		# lookup table under the key 'armor'
+		drop armor * *
+	range 91 100
+		# a rare, named weapon drop!
+		drop weapon sword kassius_sword
+		roll 1 1000
+			range 999 1000
+				drop super_rare_item

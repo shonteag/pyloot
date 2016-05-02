@@ -1,0 +1,10 @@
+roll 1 100
+	range 1 80
+		# here we provide custom arguments
+		# to the rolling process. Note the
+		# spaces carefully. They are important.
+		drop currency gold_coin ( 1 10 )
+	range 81 95
+		drop currency myst_token ( 1 2 )
+	range 96 100
+		drop key spec_key ( 1 1 )
